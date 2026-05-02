@@ -1,0 +1,207 @@
+ <!DOCTYPE html>
+ <html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>给你的第100天</title>
+ <style>
+body {
+    margin:0;
+    background:#000;
+    color:#fff;
+    font-family:sans-serif;
+    overflow:hidden;
+}
+
+/* 信封 */
+.cover {
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:#111;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:10;
+}
+.envelope {
+    width:200px;
+    height:120px;
+    background:#ffcc70;
+    position:relative;
+    cursor:pointer;
+}
+.flap {
+    position:absolute;
+    width:0;
+    height:0;
+    border-left:100px solid transparent;
+    border-right:100px solid transparent;
+    border-bottom:60px solid #e6b45c;
+    top:-60px;
+    transform-origin:bottom;
+    transition:1s;
+}
+.open .flap {
+    transform:rotateX(180deg);
+}
+
+/* 内容 */
+.container {
+    display:none;
+    padding:30px;
+    max-width:700px;
+    margin:auto;
+    line-height:1.8;
+}
+
+/* 打字 */
+#text { white-space:pre-wrap; }
+
+/* 星空 */
+.star {
+    position:fixed;
+    width:2px;
+    height:2px;
+    background:#fff;
+    animation:twinkle 2s infinite;
+}
+@keyframes twinkle {
+    0%,100%{opacity:0}
+    50%{opacity:1}
+}
+
+/* 爱心 */
+.heart {
+    position:fixed;
+    color:red;
+    font-size:20px;
+    animation:boom 1s ease-out forwards;
+}
+@keyframes boom {
+    to {
+        transform:translateY(-100px) scale(2);
+        opacity:0;
+    }
+}
+
+/* 终章 */
+.final {
+    text-align:center;
+    font-size:28px;
+    margin-top:40px;
+    opacity:0;
+    transform:scale(0.5);
+    transition:all 1s;
+}
+.show {
+    opacity:1 !important;
+    transform:scale(1) !important;
+}
+</style>
+</head>
+ <body>
+ <div class="cover" id="cover">
+    <div class="envelope" onclick="openLetter(this)">
+        <div class="flap"></div>
+    </div>
+    <p>点击打开</p>
+</div>
+ <audio id="music" loop>
+    <source src="你的音乐.mp3" type="audio/mpeg">
+</audio>
+ <div class="container" id="container">
+<h2 style="text-align:center;">💛 第100天 💛</h2>
+<div id="text"></div>
+ <div class="final" id="final">
+    崔钰浩 ❤️ 我爱你
+</div>
+</div>
+ <script>
+
+const text = `亲爱的崔钰浩：
+
+不敢相信今天竟然是我们的100天……
+
+时间如此之快，恍惚间又回到我问你要不要跟我在一起的那天——我的心在南非盛夏的水汽里氤氲，在离开埃及的飞机上颠簸与期待。那时的我天真地以为马上就能见到你，谁曾想命运弄人，我还没准备好见你，就又沿着既定的轨迹只身飞去了东南亚。只能在离去前一晚写下信笺，将我的思念轻轻埋藏。
+
+这里的海风和南非没什么两样，同样燥热，人心似火。我感受着不同的文化、不同的风俗、不同的语言、不同的笑容。
+
+年节时候，国内万家灯火，热闹团圆。远在异国他乡，我只捂着这一颗心悄悄思念你。我想给你写长长的文字——不止是文字长长，思念也赘了满篇。我给你写异乡的月亮，那么残忍，竟也和书中描写的一样，将游人的乡愁慢慢撕碎；写异乡的食物，那么熟悉，却又永远差那一种味道，独属于所谓家的味道。我还要写异乡的我，浅淡欢笑，心像缺了一角，跨越千里找寻你去。
+
+一百天，足以证明很多事情。它的跨度可以让诺言褪色，可以让人心改变，但同样，它也让感情坚定者更加坚定其心。幸运的是，我遇到了你，命中注定我爱上了你。我开始变得在意——在意这个女孩的一举一动、一颦一笑，更加在意在她眼中是否也同样有我的身影留存。我想感谢你，包容我的缺点，肯定我的优点，带给我那么多从未感受过的体验和心情。你是一个很好的女孩，就这样一直蹦蹦跳跳、开心地走下去吧。
+
+亲爱的一百天快乐。我们未来会度过很多个一百天。我想以后让你不再等待，让你时刻见到我；想和你一起看世界，亲自去丈量不同的土地和海滩。
+
+未来的每一天，我只想和你在一起。
+我要让你感到幸福，感到爱。`;
+
+let i=0;
+
+// 打字
+function typing(){
+    if(i<text.length){
+        document.getElementById("text").innerHTML+=text[i];
+        i++;
+        setTimeout(typing,35);
+    } else {
+        setTimeout(()=>{
+            document.getElementById("final").classList.add("show");
+        },1000);
+    }
+}
+
+// 打开信封
+function openLetter(el){
+    el.classList.add("open");
+    setTimeout(()=>{
+        document.getElementById("cover").style.display="none";
+        document.getElementById("container").style.display="block";
+        startMusic();
+        typing();
+        stars();
+    },1000);
+}
+
+// 音乐淡入
+function startMusic(){
+    let m=document.getElementById("music");
+    m.volume=0;
+    m.play();
+    let v=0;
+    let fade=setInterval(()=>{
+        v+=0.05;
+        if(v>=1){v=1;clearInterval(fade);}
+        m.volume=v;
+    },200);
+}
+
+// 星空
+function stars(){
+    for(let i=0;i<80;i++){
+        let s=document.createElement("div");
+        s.className="star";
+        s.style.left=Math.random()*100+"%";
+        s.style.top=Math.random()*100+"%";
+        document.body.appendChild(s);
+    }
+}
+
+// 点击炸爱心
+document.addEventListener("click",function(e){
+    for(let i=0;i<6;i++){
+        let h=document.createElement("div");
+        h.className="heart";
+        h.innerHTML="❤️";
+        h.style.left=e.clientX+"px";
+        h.style.top=e.clientY+"px";
+        document.body.appendChild(h);
+        setTimeout(()=>h.remove(),1000);
+    }
+});
+
+</script>
+ </body>
+</html>
+:::
